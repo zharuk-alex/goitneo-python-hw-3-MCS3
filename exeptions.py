@@ -1,0 +1,3 @@
+
+class ValueNotValid(Exception):
+    """ ValueNotValid """

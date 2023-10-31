@@ -1,4 +1,5 @@
 from address_book import AddressBook, Record
+from exeptions import ValueNotValid
 
 
 def has_phone(func):
@@ -60,9 +61,12 @@ def show_all(contacts):
     return "".join([f"{contact}\n" for contact in contacts.values()])
 
 def show_phone(args, contacts):
-    name, = args
-    contact = contacts.find(name)
-    return f'"{name}" not found' if contact is None else contact
+    try:
+        name = args[0]
+        contact = contacts.find(name)
+        return f'"{name}" not found' if contact is None else contact
+    except:
+        pass
 
 def phone_delete(args, contacts):
     try:
@@ -81,7 +85,52 @@ def phone_delete(args, contacts):
     except ValueError:
         return "Not enough values. Expect [name] [phone]"
 
+
+def set_email(args, contacts): 
+    try:
+        name, email = args
+        record = contacts.find(name)
+
+        if record is not None:
+            rez = record.set_email(email)
+            if rez:
+                contacts.add_record(record)
+            return rez
+        return f'"{name}" not found'
+    except ValueNotValid as e:
+        return e 
+    except ValueError as e:
+        return "Not enough values. Expect [name] [email]" 
+
+
+def remove_email(args, contacts):
+    try:
+        name, = args
+        record = contacts.find(name)
+
+        if record is not None:
+            rez = record.remove_email()
+            if rez:
+                contacts.add_record(record)
+            return rez
+        return f'"{name}" not found'
+    except ValueError:
+        return "Not enough values. Expect [name]" 
     
+def set_address(args, contacts): 
+    try:
+        name, address = args
+        record = contacts.find(name)
+
+        if record is not None:
+            rez = record.set_address(address)
+            if rez:
+                contacts.add_record(record)
+            return rez
+        return f'"{name}" not found'
+    except ValueError:
+        return "Not enough values. Expect [name] [address]" 
+# remove_address
 
 def add_birthday(args, contacts): 
     try:
@@ -158,6 +207,15 @@ def main():
             birthdays(contacts)
         elif command == "all":
             print(show_all(contacts))
+        elif command == "set-email": 
+            print(set_email(args,contacts))
+        elif command == "remove-email": 
+            print(remove_email(args,contacts))
+        elif command == "set-address": 
+            print(set_address(args,contacts))
+        elif command == "remove-address": 
+            # print(remove_address(args,contacts))
+            pass
         elif command == "show_help":
             print(show_help())
         else:
